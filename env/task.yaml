@@ -1,0 +1,103 @@
+experiment: mapf_ste_v1
+env: mg_mapf
+maps_yaml: ./env/train_new_maps.yaml
+map_name: maze-32-32-4        
+num_agents: 16               
+num_goals: 4                  
+obs_radius: 5
+max_episode_steps: 1024
+enable_curriculum: false
+with_wandb: false
+
+tsp_a_new_mu: 0.5              
+tsp_a_new_two_opt_iter: 30    
+
+map_pool:
+  - den520d
+  - wfi_warehouse
+  - maze-32-32-4
+agent_pool: [8, 16, 32]
+goal_pool: [4, 8]
+
+# Reward
+goal_reward: 1.0
+collision_penalty: -1.0
+movement_penalty: -0.001
+multi_goal_bonus: 2.0
+backtrack_penalty: 0.0
+intrinsic_target_reward: 0.002
+
+# Encoder configuration
+encoder:
+  extra_fc_layers: 1
+  num_filters: 64
+  num_res_blocks: 8
+  activation_func: ReLU
+  hidden_size: 512
+
+# RNN configuration
+rnn:
+  use_rnn: true
+  rnn_size: 2816       
+  policy_rnn_size: 256
+  pred_rnn_size: 128
+  recurrence: 8
+  rnn_type: gru
+
+# Training configuration
+training:
+  train_for_env_steps: 1000000000
+  rollout: 32
+  num_workers: 16
+  num_envs_per_worker: 8
+  worker_num_splits: 2
+  max_policy_lag: 1
+  force_envs_single_thread: true
+
+# PPO configuration
+ppo:
+  ppo_clip_ratio: 0.2
+  batch_size: 16384
+  num_batches_per_epoch: 8
+  num_batches_to_accumulate: 1
+
+# Optimizer configuration
+optimizer:
+  type: adam
+  learning_rate: 0.000146
+  gamma: 0.9756
+  lr_schedule: constant
+
+# Normalization configuration
+normalization:
+  normalize_input: false
+  normalize_returns: false
+
+# Other configurations
+other:
+  exploration_loss_coeff: 0.1
+  async_rl: true
+  shuffle_minibatches: false
+  decoder_mlp_layers: []
+  value_bootstrap: true
+  save_milestones_sec: -1
+  keep_checkpoints: 3
+  stats_avg: 10
+  save_best_metric: success_with_recency
+
+predictor:
+  use_neighbor_predictor: true
+  prediction_steps: 1
+  use_aux_loss: true    
+  prediction_head: action_ste
+  max_neighbors: 20
+  map_size: 32              
+  confidence_weight: 0.3     
+  collab_penalty: 0.1        
+
+map_pool:
+  - den520d
+  - wfi_warehouse
+  - maze-32-32-4
+agent_pool: [8, 16, 32]
+goal_pool: [4, 8]
